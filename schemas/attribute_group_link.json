@@ -1,0 +1,17 @@
+[
+  {
+    "mode": "REQUIRED",
+    "name": "attribute_group_link_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "attribute_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "group_id",
+    "type": "INTEGER"
+  }
+]
