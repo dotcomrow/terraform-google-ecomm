@@ -1,5 +1,5 @@
 #!/bin/bash
 
 for file in *.json; do
-    mv -- "$file" "${file%.txt}.tf"
+    mv -- "$file" "${file%.json}.tf"
 done

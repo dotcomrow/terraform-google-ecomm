@@ -1,3 +1,9 @@
+resource "google_bigquery_table" "cart_address" {
+  dataset_id = var.dataset_id
+  table_id   = "cart_address"
+  deletion_protection = false
+  project                     = var.project_id
+  schema = <<EOF
 [
   {
     "mode": "REQUIRED",
@@ -43,3 +49,5 @@
     "type": "STRING"
   }
 ]
+EOF
+}
