@@ -1,3 +1,9 @@
+resource "google_bigquery_table" "tax_rate" {
+  dataset_id = var.dataset_id
+  table_id   = "tax_rate"
+  deletion_protection = false
+  project                     = var.project_id
+  schema = <<EOF
 [
   {
     "mode": "REQUIRED",
@@ -56,3 +62,5 @@
     "type": "INTEGER"
   }
 ]
+EOF
+}

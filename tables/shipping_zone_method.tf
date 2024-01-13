@@ -1,3 +1,9 @@
+resource "google_bigquery_table" "shipping_zone_method" {
+  dataset_id = var.dataset_id
+  table_id   = "shipping_zone_method"
+  deletion_protection = false
+  project                     = var.project_id
+  schema = <<EOF
 [
   {
     "mode": "REQUIRED",
@@ -50,3 +56,5 @@
     "type": "NUMERIC"
   }
 ]
+EOF
+}

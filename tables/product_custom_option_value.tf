@@ -1,3 +1,9 @@
+resource "google_bigquery_table" "product_custom_option_value" {
+  dataset_id = var.dataset_id
+  table_id   = "product_custom_option_value"
+  deletion_protection = false
+  project                     = var.project_id
+  schema = <<EOF
 [
   {
     "mode": "REQUIRED",
@@ -32,3 +38,5 @@
     "type": "STRING"
   }
 ]
+EOF
+}
