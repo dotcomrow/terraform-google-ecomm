@@ -1,3 +1,9 @@
+resource "google_bigquery_table" "cms_page_description" {
+  dataset_id = var.dataset_id
+  table_id   = "cms_page_description"
+  deletion_protection = false
+  project                     = var.project_id
+  schema = <<EOF
 [
   {
     "mode": "REQUIRED",
@@ -35,3 +41,5 @@
     "type": "STRING"
   }
 ]
+EOF
+}

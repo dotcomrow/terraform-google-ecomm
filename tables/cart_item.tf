@@ -1,3 +1,9 @@
+resource "google_bigquery_table" "cart_item" {
+  dataset_id = var.dataset_id
+  table_id   = "cart_item"
+  deletion_protection = false
+  project                     = var.project_id
+  schema = <<EOF
 [
   {
     "mode": "REQUIRED",
@@ -132,3 +138,5 @@
     "type": "TIMESTAMP"
   }
 ]
+EOF
+}

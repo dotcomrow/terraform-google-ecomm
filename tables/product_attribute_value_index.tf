@@ -1,3 +1,9 @@
+resource "google_bigquery_table" "product_attribute_value_index" {
+  dataset_id = var.dataset_id
+  table_id   = "product_attribute_value_index"
+  deletion_protection = false
+  project                     = var.project_id
+  schema = <<EOF
 [
   {
     "mode": "REQUIRED",
@@ -23,3 +29,5 @@
     "type": "STRING"
   }
 ]
+EOF
+}
