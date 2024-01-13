@@ -1,5 +1,5 @@
 resource "google_bigquery_table" "admin_user" {
-  dataset_id = google_bigquery_dataset.ecomm.dataset_id
+  dataset_id = var.dataset_id
   table_id   = "admin_user"
   deletion_protection = false
   project                     = var.project_id
