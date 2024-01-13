@@ -5,7 +5,13 @@ variable "project_id" {
 }
 
 variable "dataset_id" {
-  description = "The dataset id to use"
+  description = "The dataset id id to use"
   type        = string
   nullable = false
+}
+
+variable "dataset" {
+    description = "The dataset to use"
+    type        = string
+    nullable = false
 }
