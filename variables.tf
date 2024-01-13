@@ -75,11 +75,11 @@ variable "cloudflare_account_id" {
   nullable = false
 }
 
-variable "cloudflare_worker_namespace_id" {
-  description = "Cloudflare worker namespace id"
-  type        = string
-  nullable = false
-}
+# variable "cloudflare_worker_namespace_id" {
+#   description = "Cloudflare worker namespace id"
+#   type        = string
+#   nullable = false
+# }
 
 variable "registry_name" {
   description = "Registry name"
