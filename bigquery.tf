@@ -11,7 +11,8 @@ module "schemas" {
     source = "./tables"
     project_id = var.project_id
     dataset_id = google_bigquery_dataset.ecomm.dataset_id
-    dataset = google_bigquery_dataset.ecomm
+
+    depends_on = [ google_bigquery_dataset.ecomm ]
 }
 
 # resource "google_bigquery_table" "admin_user" {

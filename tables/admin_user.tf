@@ -48,5 +48,4 @@ resource "google_bigquery_table" "admin_user" {
   }
 ]
 EOF
-  depends_on = [ var.dataset ]
 }

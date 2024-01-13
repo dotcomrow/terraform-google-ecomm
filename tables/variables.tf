@@ -9,9 +9,3 @@ variable "dataset_id" {
   type        = string
   nullable = false
 }
-
-variable "dataset" {
-    description = "The dataset to use"
-    type        = string
-    nullable = false
-}
