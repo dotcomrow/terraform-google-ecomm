@@ -7,6 +7,11 @@ resource "google_bigquery_dataset" "ecomm" {
   depends_on = [ google_project_service.project_service ]
 }
 
+module "schemas" {
+    source = "./tables"
+    project_id = var.project_id
+}
+
 # resource "google_bigquery_table" "admin_user" {
 #   dataset_id = google_bigquery_dataset.ecomm.dataset_id
 #   table_id   = "admin_user"
