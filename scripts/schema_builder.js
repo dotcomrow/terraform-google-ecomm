@@ -4,30 +4,36 @@ function main() {
   const options = {
     keyFilename: "key.json",
     projectId: "$1",
+    datasetId: "$2",
   };
   const bigquery = new BigQuery(options);
 
   async function query() {
-    // Queries the U.S. given names dataset for the state of Texas.
+    
+    const [tables] = await bigquery.dataset(datasetId).getTables();
 
-    const query = "SELECT name FROM \`bigquery-public-data.usa_names.usa_1910_2013\` WHERE state = 'TX' LIMIT 100";
+    tables.forEach(table => {
+      console.log(table.id);
+    });
 
-    // For all options, see https://cloud.google.com/bigquery/docs/reference/rest/v2/jobs/query
-    const options = {
-      query: query,
-      // Location must match that of the dataset(s) referenced in the query.
-      location: "US",
-    };
+    // const query = "SELECT name FROM \`bigquery-public-data.usa_names.usa_1910_2013\` WHERE state = 'TX' LIMIT 100";
 
-    // Run the query as a job
-    const [job] = await bigquery.createQueryJob(options);
+    // // For all options, see https://cloud.google.com/bigquery/docs/reference/rest/v2/jobs/query
+    // const options = {
+    //   query: query,
+    //   // Location must match that of the dataset(s) referenced in the query.
+    //   location: "US",
+    // };
 
-    // Wait for the query to finish
-    const [rows] = await job.getQueryResults();
+    // // Run the query as a job
+    // const [job] = await bigquery.createQueryJob(options);
 
-    // Print the results
-    console.log("Rows:");
-    rows.forEach((row) => console.log(row));
+    // // Wait for the query to finish
+    // const [rows] = await job.getQueryResults();
+
+    // // Print the results
+    // console.log("Rows:");
+    // rows.forEach((row) => console.log(row));
   }
   // [END bigquery_query]
   query();
