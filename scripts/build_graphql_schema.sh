@@ -25,12 +25,13 @@ cd scripts
 npm install
 
 
-curl https://sdk.cloud.google.com > install.sh
-bash install.sh --disable-prompts --install-dir=./$dirstring >/dev/null 
-PATH=$PATH:./$dirstring/google-cloud-sdk/bin
-printf '%s' "$GOOGLE_CREDENTIALS" > key.json
-gcloud auth activate-service-account --key-file=key.json
+# curl https://sdk.cloud.google.com > install.sh
+# bash install.sh --disable-prompts --install-dir=./$dirstring >/dev/null 
+# PATH=$PATH:./$dirstring/google-cloud-sdk/bin
+# printf '%s' "$GOOGLE_CREDENTIALS" > key.json
+# gcloud auth activate-service-account --key-file=key.json
 
+printf '%s' "$GOOGLE_CREDENTIALS" > key.json
 node schema_builder.sh
 
 SHA="test"
