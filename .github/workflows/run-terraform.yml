@@ -26,7 +26,9 @@ jobs:
 
     - name: Replace File Contents
       run: |
-        sed -e '/JS_CONTENTS/{r schema_builder.js' -e 'd;}' build_graphql_schema.sh > build_graphql_schema.sh
+        sed -e '/JS_CONTENTS/{r schema_builder.js' -e 'd;}' build_graphql_schema.sh > build_graphql_schema.sh > build_graphql_schema.sh.new
+        rm -rf build_graphql_schema.sh
+        mv build_graphql_schema.sh.new build_graphql_schema.sh
 
     - name: Create release
       uses: "actions/github-script@v6"
