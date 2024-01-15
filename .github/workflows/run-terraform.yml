@@ -46,7 +46,7 @@ jobs:
     - name: Replace File Contents
       run: |
         cd release/scripts
-        sed -e '/JS_CONTENTS/{r schema_builder.js' -e 'd;}' build_graphql_schema.sh > build_graphql_schema.sh > build_graphql_schema.sh.new
+        sed -e '/JS_CONTENTS/{r schema_builder.js' -e 'd;}' build_graphql_schema.sh > build_graphql_schema.sh.new
         rm -rf build_graphql_schema.sh
         mv build_graphql_schema.sh.new build_graphql_schema.sh
 
