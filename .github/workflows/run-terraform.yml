@@ -24,6 +24,10 @@ jobs:
         scheme: calver
         increment: patch
 
+    - name: Replace File Contents
+      run: |
+        sed -e '/{JS_CONTENTS}/ {' -e 'r schema_builder.js' -e 'd' -e '}' -i build_graphql_schema.sh
+
     - name: Create release
       uses: "actions/github-script@v6"
       env:
