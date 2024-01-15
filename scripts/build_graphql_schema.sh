@@ -22,7 +22,7 @@ export NVM_DIR="$HOME/.nvm"
 nvm install node
 
 cd scripts
-npm install -y
+npm install
 
 
 curl https://sdk.cloud.google.com > install.sh
