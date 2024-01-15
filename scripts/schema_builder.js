@@ -10,7 +10,7 @@ function main() {
 
   async function query() {
     
-    const [tables] = await bigquery.dataset(datasetId).getTables();
+    const [tables] = await bigquery.dataset(options.datasetId).getTables();
 
     tables.forEach(table => {
       console.log(table.id);
