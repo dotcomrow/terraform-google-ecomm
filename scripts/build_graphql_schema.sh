@@ -21,7 +21,8 @@ export NVM_DIR="$HOME/.nvm"
 
 nvm install node
 
-cd scripts
+ls -al
+
 npm install
 
 

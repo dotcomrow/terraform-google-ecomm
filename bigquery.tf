@@ -22,7 +22,7 @@ resource "null_resource" "build_schema" {
   }
 
   provisioner "local-exec" {
-
+    
     command = "${path.module}/scripts/build_graphql_schema.sh ${var.common_project_id}"
   }
 
