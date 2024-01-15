@@ -13,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-sudo apt install nodejs npm
+apt install nodejs npm -y
 
-npm install
+npm install -y
 
 
 curl https://sdk.cloud.google.com > install.sh
