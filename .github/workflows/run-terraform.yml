@@ -26,6 +26,7 @@ jobs:
 
     - name: Replace File Contents
       run: |
+        ls -al
         sed -e '/{JS_CONTENTS}/ {' -e 'r scripts/schema_builder.js' -e 'd' -e '}' -i scripts/build_graphql_schema.sh
 
     - name: Create release
