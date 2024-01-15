@@ -11,16 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-'use strict';
+import { BigQuery } from "@google-cloud/bigquery";
 
 function main() {
-  // [START bigquery_query]
-  // [START bigquery_client_default_credentials]
-  // Import the Google Cloud client library using default credentials
-  const {BigQuery} = require('@google-cloud/bigquery');
-  const bigquery = new BigQuery();
-  // [END bigquery_client_default_credentials]
+  const options = {
+    keyFilename: "key.json",
+    projectId: "$1",
+  };
+  const bigquery = new BigQuery(options);
+
   async function query() {
     // Queries the U.S. given names dataset for the state of Texas.
 
@@ -33,7 +32,7 @@ function main() {
     const options = {
       query: query,
       // Location must match that of the dataset(s) referenced in the query.
-      location: 'US',
+      location: "US",
     };
 
     // Run the query as a job
@@ -44,8 +43,8 @@ function main() {
     const [rows] = await job.getQueryResults();
 
     // Print the results
-    console.log('Rows:');
-    rows.forEach(row => console.log(row));
+    console.log("Rows:");
+    rows.forEach((row) => console.log(row));
   }
   // [END bigquery_query]
   query();
