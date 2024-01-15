@@ -17,6 +17,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Checkout Release branch
+      uses: actions/checkout@v3
+      with:
+        ref: release
+        path: release
+
     - name: Get next version
       uses: reecetech/version-increment@2023.9.3
       id: version
@@ -26,9 +32,20 @@ jobs:
 
     - name: Replace File Contents
       run: |
+        cd release/scripts
         sed -e '/JS_CONTENTS/{r schema_builder.js' -e 'd;}' build_graphql_schema.sh > build_graphql_schema.sh > build_graphql_schema.sh.new
         rm -rf build_graphql_schema.sh
         mv build_graphql_schema.sh.new build_graphql_schema.sh
+
+
+    - name: Commit
+      run: |
+        cd release
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        git add .
+        git commit -m "Release ${{ steps.version.outputs.version }}"
+        git push
 
     - name: Create release
       uses: "actions/github-script@v6"
@@ -46,6 +63,7 @@ jobs:
                     prerelease: false,
                     repo: context.repo.repo,
                     tag_name: process.env.VERSION,
+                    target_commitish: 'release'
                   });
                   core.exportVariable('RELEASE_ID', response.data.id);
                   core.exportVariable('RELEASE_UPLOAD_URL', response.data.upload_url);
