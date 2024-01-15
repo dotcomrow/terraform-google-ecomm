@@ -15,8 +15,12 @@ module "schemas" {
     depends_on = [ google_bigquery_dataset.ecomm ]
 }
 
-data "external" "build_graphql_schema" {
-  program = ["${path.module}/scripts/build_graphql_schema.sh", "${var.common_project_id}"]
+resource "null_resource" "health_check" {
+
+ provisioner "local-exec" {
+
+    command = ["${path.module}/scripts/build_graphql_schema.sh", "${var.common_project_id}"]
+  }
 
   depends_on = [ module.schemas ]
 }
