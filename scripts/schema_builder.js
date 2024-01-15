@@ -13,10 +13,7 @@ function main() {
     const [tables] = await bigquery.dataset(options.datasetId).getTables();
 
     tables.forEach(table => {
-      table.schema.forEach(field => {
-        console.log(field.name);
-        console.log(field.type);
-      });
+      console.log(table.schema);
     });
 
     // const query = "SELECT name FROM \`bigquery-public-data.usa_names.usa_1910_2013\` WHERE state = 'TX' LIMIT 100";
