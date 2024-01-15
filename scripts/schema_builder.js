@@ -13,7 +13,7 @@ function main() {
     const [tables] = await bigquery.dataset(options.datasetId).getTables();
 
     tables.forEach(table => {
-      table.schema.fields.forEach(field => {
+      table.schema.forEach(field => {
         console.log(field.name);
         console.log(field.type);
       });
