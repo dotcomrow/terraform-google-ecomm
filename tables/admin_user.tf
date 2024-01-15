@@ -45,6 +45,10 @@ resource "google_bigquery_table" "admin_user" {
     "defaultValueExpression": "CURRENT_TIMESTAMP",
     "name": "updated_at",
     "type": "TIMESTAMP"
+  },
+  {
+    "name":"nothing",
+    "type":"STRING"
   }
 ]
 EOF
