@@ -51,6 +51,13 @@ jobs:
         mv build_graphql_schema.sh.new build_graphql_schema.sh
         chmod 777 build_graphql_schema.sh
 
+    - name: Replace File Contents
+      run: |
+          cd release/scripts
+          sed -e '/PKG_JSON_CONTENTS/{r package.json' -e 'd;}' build_graphql_schema.sh > build_graphql_schema.sh.new
+          rm -rf build_graphql_schema.sh
+          mv build_graphql_schema.sh.new build_graphql_schema.sh
+          chmod 777 build_graphql_schema.sh
 
     - name: Commit
       run: |

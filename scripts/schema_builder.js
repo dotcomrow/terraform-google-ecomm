@@ -1,4 +1,5 @@
 import { BigQuery } from "@google-cloud/bigquery";
+import { GraphQLSchema, GraphQLScalarType, GraphQLObjectType } from "graphql";
 
 function main() {
   const options = {
@@ -8,34 +9,49 @@ function main() {
   };
   const bigquery = new BigQuery(options);
 
-  async function query() {
-    
+  function getTableMetadata(table) {
+    async function getTM(table) {
+      const metadata = await table.getMetadata();
+      return metadata;
+    }
+    return getTM(table);
+  }
+
+  async function fetchSchemas() {
     const [tables] = await bigquery.dataset(options.datasetId).getTables();
 
-    tables.forEach(table => {
-      console.log(table.schema);
-    });
+    var tableList = [];
+    var graphqlObjects = [];
+    for (var table of tables) {
+      var tableMetadata = await getTableMetadata(table);
+      tableList.push(tableMetadata);
+    }
 
-    // const query = "SELECT name FROM \`bigquery-public-data.usa_names.usa_1910_2013\` WHERE state = 'TX' LIMIT 100";
+    for (var metadata of tableList) {
+      var fields = [];
+      metadata[0].schema.fields.forEach((field) => {
+        fields[field.name] = {
+          type: field.type,
+          description: field.description,
+        };
 
-    // // For all options, see https://cloud.google.com/bigquery/docs/reference/rest/v2/jobs/query
-    // const options = {
-    //   query: query,
-    //   // Location must match that of the dataset(s) referenced in the query.
-    //   location: "US",
-    // };
+        graphqlObjects.push(
+          new GraphQLObjectType({
+            name: metadata[0].tableReference.tableId,
+            fields: fields,
+          })
+        );
+      });
+    }
 
-    // // Run the query as a job
-    // const [job] = await bigquery.createQueryJob(options);
-
-    // // Wait for the query to finish
-    // const [rows] = await job.getQueryResults();
-
-    // // Print the results
-    // console.log("Rows:");
-    // rows.forEach((row) => console.log(row));
+    return graphqlObjects;
   }
-  // [END bigquery_query]
+
+  async function query() {
+    var schemas = await fetchSchemas();
+    
+
+  }
   query();
 }
 main(...process.argv.slice(2));
