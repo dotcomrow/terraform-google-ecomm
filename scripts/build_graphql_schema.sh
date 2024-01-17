@@ -16,6 +16,7 @@ cat > schema_builder.js <<EOF
 JS_CONTENTS
 EOF
 
+ls -al
 printf '%s' "$GOOGLE_CREDENTIALS" > key.json
 node schema_builder.js
 

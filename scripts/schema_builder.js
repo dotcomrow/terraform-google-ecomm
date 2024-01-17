@@ -51,6 +51,7 @@ function main() {
     var schemas = await fetchSchemas();
     
 
+    
   }
   query();
 }
