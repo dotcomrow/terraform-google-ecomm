@@ -1,8 +1,15 @@
 import { BigQuery } from "@google-cloud/bigquery";
-import { GraphQLSchema, GraphQLScalarType, GraphQLObjectType, introspectionFromSchema } from "graphql";
+import { GraphQLSchema, 
+  GraphQLScalarType, 
+  GraphQLObjectType,
+  GraphQLString, 
+  GraphQLInt, 
+  GraphQLBoolean,
+  introspectionFromSchema } from "graphql";
 import { Storage } from '@google-cloud/storage';
 import fs from 'fs';
 import { serializeError } from "serialize-error";
+import { mergeSchemas } from '@graphql-tools/schema';
 
 function main() {
   const options = {
@@ -12,7 +19,10 @@ function main() {
     bucket_name: "$3",
   };
   const bigquery = new BigQuery(options);
-  const storage = new Storage();
+  const storage = new Storage({
+    projectId: options.projectId,
+    keyFilename: "storage_admin_key.json",
+  });
   const fileName = 'graphql_schema.json';
 
   function getTableMetadata(table) {
@@ -25,10 +35,10 @@ function main() {
 
   async function uploadFile() {
     
-    generationMatchPrecondition = 0
+    var generationMatchPrecondition = 0
 
-    const options = {
-      destination: destFileName,
+    const local_options = {
+      destination: fileName,
       // Optional:
       // Set a generation-match precondition to avoid potential race conditions
       // and data corruptions. The request to upload is aborted if the object's
@@ -39,8 +49,35 @@ function main() {
       preconditionOpts: {ifGenerationMatch: generationMatchPrecondition},
     };
 
-    await storage.bucket(bucket_name).upload(fileName, options);
-    console.log(`${filePath} uploaded to ${bucketName}`);
+    await storage.bucket(options.bucket_name).upload(fileName, local_options);
+    console.log(`${filePath} uploaded to ${options.bucket_name}`);
+  }
+
+  function parseType(field) {
+    switch (field.type) {
+      case "STRING":
+        return GraphQLString;
+      case "INTEGER":
+        return GraphQLInt;
+      case "BOOLEAN":
+        return GraphQLBoolean;
+      case "FLOAT":
+        return GraphQLFloat;
+      case "TIMESTAMP":
+        return GraphQLString;
+      case "DATE":
+        return GraphQLString;
+      case "TIME":
+        return GraphQLString;
+      case "DATETIME":
+        return GraphQLString;
+      case "GEOGRAPHY":
+        return GraphQLString;
+      case "NUMERIC":
+        return GraphQLInt;
+      default:
+        return GraphQLString;
+    }
   }
 
   async function fetchSchemas() {
@@ -54,20 +91,26 @@ function main() {
     }
 
     for (var metadata of tableList) {
-      var fields = [];
+      var fields = {};
       metadata[0].schema.fields.forEach((field) => {
         fields[field.name] = {
-          type: field.type,
+          type: parseType(field.type),
           description: field.description,
         };
-
-        graphqlObjects.push(
-          new GraphQLObjectType({
-            name: metadata[0].tableReference.tableId,
-            fields: fields,
-          })
-        );
       });
+
+      var graphqlObj = new GraphQLObjectType({
+        name: metadata[0].tableReference.tableId,
+        fields: fields,
+      });
+
+      var graphqlSchema = new GraphQLSchema({
+        query: graphqlObj
+      });
+
+      graphqlObjects.push(
+        graphqlSchema
+      );
     }
 
     return graphqlObjects;
@@ -76,10 +119,14 @@ function main() {
   async function query() {
     var schemas = await fetchSchemas();
     const storage = new Storage();
-    const schema_json = introspectionFromSchema(schemas);
+    const mergedSchema = mergeSchemas({
+      schemas: schemas
+    })
+    const schema_json = introspectionFromSchema(mergedSchema);
     let json = JSON.stringify(schema_json);
-    fs.writeFile(fileName, json);
-    ls -al
+    // console.log(json);
+    await fs.writeFile(fileName, json, (err) => err && console.error(err));
+    await uploadFile();
   }
 
   try {

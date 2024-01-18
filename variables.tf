@@ -98,3 +98,9 @@ variable "bucket_name" {
   type        = string
   nullable = false
 }
+
+variable "cloud_storage_admin" {
+  description = "Cloud storage admin role"
+  type        = string
+  nullable = false
+}
