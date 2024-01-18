@@ -1,6 +1,7 @@
 import { BigQuery } from "@google-cloud/bigquery";
-import { GraphQLSchema, GraphQLScalarType, GraphQLObjectType } from "graphql";
+import { GraphQLSchema, GraphQLScalarType, GraphQLObjectType, introspectionFromSchema } from "graphql";
 import { Storage } from '@google-cloud/storage';
+import fs from 'fs';
 
 function main() {
   const options = {
@@ -11,6 +12,7 @@ function main() {
   };
   const bigquery = new BigQuery(options);
   const storage = new Storage();
+  const fileName = 'graphql_schema.json';
 
   function getTableMetadata(table) {
     async function getTM(table) {
@@ -21,7 +23,7 @@ function main() {
   }
 
   async function uploadFile() {
-    fileName = 'graphql_schema.json',
+    
     generationMatchPrecondition = 0
 
     const options = {
@@ -73,7 +75,10 @@ function main() {
   async function query() {
     var schemas = await fetchSchemas();
     const storage = new Storage();
-    console.log(schemas)    
+    const schema_json = introspectionFromSchema(schemas);
+    let json = JSON.stringify(schema_json);
+    fs.writeFile(fileName, json);
+    ls -al
   }
   query();
 }
