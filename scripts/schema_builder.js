@@ -49,9 +49,7 @@ function main() {
 
   async function query() {
     var schemas = await fetchSchemas();
-    
-
-    
+    console.log(schemas)    
   }
   query();
 }
