@@ -92,3 +92,9 @@ variable "audience" {
   type        = string
   nullable = false
 }
+
+variable "bucket_name" {
+  description = "Bucket name"
+  type        = string
+  nullable = false
+}

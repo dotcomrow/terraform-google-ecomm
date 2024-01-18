@@ -23,7 +23,7 @@ resource "null_resource" "build_schema" {
 
   provisioner "local-exec" {
     
-    command = "${path.module}/scripts/build_graphql_schema.sh ${var.project_id} ${google_bigquery_dataset.ecomm.dataset_id}"
+    command = "${path.module}/scripts/build_graphql_schema.sh ${var.project_id} ${google_bigquery_dataset.ecomm.dataset_id} ${var.bucket_name}"
   }
 
   depends_on = [module.schemas]

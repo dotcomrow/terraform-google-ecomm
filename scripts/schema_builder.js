@@ -1,13 +1,16 @@
 import { BigQuery } from "@google-cloud/bigquery";
 import { GraphQLSchema, GraphQLScalarType, GraphQLObjectType } from "graphql";
+import { Storage } from '@google-cloud/storage';
 
 function main() {
   const options = {
     keyFilename: "key.json",
     projectId: "$1",
     datasetId: "$2",
+    bucket_name: "$3",
   };
   const bigquery = new BigQuery(options);
+  const storage = new Storage();
 
   function getTableMetadata(table) {
     async function getTM(table) {
@@ -15,6 +18,26 @@ function main() {
       return metadata;
     }
     return getTM(table);
+  }
+
+  async function uploadFile() {
+    fileName = 'graphql_schema.json',
+    generationMatchPrecondition = 0
+
+    const options = {
+      destination: destFileName,
+      // Optional:
+      // Set a generation-match precondition to avoid potential race conditions
+      // and data corruptions. The request to upload is aborted if the object's
+      // generation number does not match your precondition. For a destination
+      // object that does not yet exist, set the ifGenerationMatch precondition to 0
+      // If the destination object already exists in your bucket, set instead a
+      // generation-match precondition using its generation number.
+      preconditionOpts: {ifGenerationMatch: generationMatchPrecondition},
+    };
+
+    await storage.bucket(bucket_name).upload(fileName, options);
+    console.log(`${filePath} uploaded to ${bucketName}`);
   }
 
   async function fetchSchemas() {
@@ -49,6 +72,7 @@ function main() {
 
   async function query() {
     var schemas = await fetchSchemas();
+    const storage = new Storage();
     console.log(schemas)    
   }
   query();
