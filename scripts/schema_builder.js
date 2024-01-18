@@ -2,6 +2,7 @@ import { BigQuery } from "@google-cloud/bigquery";
 import { GraphQLSchema, GraphQLScalarType, GraphQLObjectType, introspectionFromSchema } from "graphql";
 import { Storage } from '@google-cloud/storage';
 import fs from 'fs';
+import { serializeError } from "serialize-error";
 
 function main() {
   const options = {
@@ -80,6 +81,12 @@ function main() {
     fs.writeFile(fileName, json);
     ls -al
   }
-  query();
+
+  try {
+    query();
+  } catch (err) {
+    const responseError = serializeError(err);
+    console.error(responseError);
+  }
 }
 main(...process.argv.slice(2));
