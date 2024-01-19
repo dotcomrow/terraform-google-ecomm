@@ -17,7 +17,7 @@ JS_CONTENTS
 EOF
 
 # ls -al
-# printf '%s' "$GOOGLE_CREDENTIALS" > key.json
+printf '%s' "$GOOGLE_CREDENTIALS" > key.json
 # printf '%s' "$STORAGE_ADMIN_CREDENTIALS" > storage_admin_key.json
 node schema_builder.js
 
