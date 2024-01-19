@@ -50,7 +50,6 @@ function main() {
     };
 
     await storage.bucket(options.bucket_name).upload(fileName, local_options);
-    console.log(`${filePath} uploaded to ${options.bucket_name}`);
   }
 
   function parseType(field) {
