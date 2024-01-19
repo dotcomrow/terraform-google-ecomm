@@ -1,6 +1,5 @@
 import { BigQuery } from "@google-cloud/bigquery";
 import { GraphQLSchema, 
-  GraphQLScalarType, 
   GraphQLObjectType,
   GraphQLString, 
   GraphQLInt, 
@@ -11,8 +10,10 @@ import { serializeError } from "serialize-error";
 import { mergeSchemas } from '@graphql-tools/schema';
 import { R2 } from 'node-cloudflare-r2';
 
-function main() {
+async function main() {
   const options = {
+    // bucket_name: "graphql_schemas"
+
     keyFilename: "key.json",
     projectId: "$1",
     datasetId: "$2",
@@ -31,6 +32,7 @@ function main() {
   });
 
   const bucket = r2.bucket("$3");
+  // const bucket = r2.bucket("schemas");
   const fileName = 'graphql_schema.json';
 
   function getTableMetadata(table) {
@@ -64,8 +66,8 @@ function main() {
 
     // console.log(await bucket.exists());
     // true
-    console.log("uploading file -> " + fileName)
-    const upload = await bucket.uploadFile(fileName, fileName);
+
+    const upload = await bucket.uploadFile(fileName, fileName, {}, "application/json");
     console.log(upload);
   }
 
@@ -134,19 +136,27 @@ function main() {
 
   async function query() {
     var schemas = await fetchSchemas();
-    const storage = new Storage();
+    // const storage = new Storage();
     const mergedSchema = mergeSchemas({
       schemas: schemas
     })
     const schema_json = introspectionFromSchema(mergedSchema);
     let json = JSON.stringify(schema_json);
     // console.log(json);
-    await fs.writeFile(fileName, json, (err) => err && console.error(err));
-    await uploadFile();
+    await fs.writeFile(fileName, json,{ flush:true }, (err) => {
+      err && console.error(err)
+    });
+    fs.readFile(fileName, 'utf8', async (err, data) => {
+      if (err) {
+        console.error(err)
+        return
+      }
+      await uploadFile();
+    });
   }
 
   try {
-    query();
+    await query();
   } catch (err) {
     const responseError = serializeError(err);
     console.error(responseError);
