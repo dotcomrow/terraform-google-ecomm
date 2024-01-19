@@ -25,7 +25,7 @@ resource "null_resource" "build_schema" {
     # environment = {
     #   STORAGE_ADMIN_CREDENTIALS = "${var.cloud_storage_admin}"
     # }
-    command = "${path.module}/scripts/build_graphql_schema.sh ${var.project_id} ${google_bigquery_dataset.ecomm.dataset_id} ${var.bucket_name} ${var.cloudflare_account_id} ${var.r2_access_key_id} ${var.r2_secret_access_key}"
+    command = "${path.module}/scripts/build_graphql_schema.sh ${var.project_id} ${google_bigquery_dataset.ecomm.dataset_id} ${var.bucket_name} ${var.r2_account_id} ${var.r2_access_key_id} ${var.r2_secret_access_key}"
   }
 
   depends_on = [module.schemas]

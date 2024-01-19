@@ -110,3 +110,9 @@ variable "r2_secret_access_key" {
   type        = string
   nullable = false
 }
+
+variable "r2_account_id" {
+  description = "value of the r2 account id"
+  type        = string
+  nullable = false
+}
