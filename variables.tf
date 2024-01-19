@@ -99,12 +99,6 @@ variable "bucket_name" {
   nullable = false
 }
 
-variable "cloudflare_account_id" {
-  description = "Cloudflare account id"
-  type        = string
-  nullable = false
-}
-
 variable "r2_access_key_id" {
   description = "value of the r2 access key id"
   type        = string
