@@ -66,6 +66,7 @@ function main() {
     // true
 
     const upload = await bucket.uploadFile(fileName, fileName);
+    console.log(upload);
   }
 
   function parseType(field) {
