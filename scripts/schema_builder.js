@@ -64,7 +64,7 @@ function main() {
 
     // console.log(await bucket.exists());
     // true
-
+    console.log("uploading file -> " + fileName)
     const upload = await bucket.uploadFile(fileName, fileName);
     console.log(upload);
   }
