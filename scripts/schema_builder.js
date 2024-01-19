@@ -6,23 +6,31 @@ import { GraphQLSchema,
   GraphQLInt, 
   GraphQLBoolean,
   introspectionFromSchema } from "graphql";
-import { Storage } from '@google-cloud/storage';
 import fs from 'fs';
 import { serializeError } from "serialize-error";
 import { mergeSchemas } from '@graphql-tools/schema';
+import { R2 } from 'node-cloudflare-r2';
 
 function main() {
   const options = {
     keyFilename: "key.json",
     projectId: "$1",
     datasetId: "$2",
-    bucket_name: "$3",
+    // bucket_name: "$3",
   };
   const bigquery = new BigQuery(options);
-  const storage = new Storage({
-    projectId: options.projectId,
-    keyFilename: "storage_admin_key.json",
+  // const storage = new Storage({
+  //   projectId: options.projectId,
+  //   keyFilename: "storage_admin_key.json",
+  // });
+
+  const r2 = new R2({
+      accountId: "$4",
+      accessKeyId: "$5",
+      secretAccessKey: "$6",
   });
+
+  const bucket = r2.bucket("$3");
   const fileName = 'graphql_schema.json';
 
   function getTableMetadata(table) {
@@ -35,21 +43,29 @@ function main() {
 
   async function uploadFile() {
     
-    var generationMatchPrecondition = 0
+    // var generationMatchPrecondition = 0
 
-    const local_options = {
-      destination: fileName,
-      // Optional:
-      // Set a generation-match precondition to avoid potential race conditions
-      // and data corruptions. The request to upload is aborted if the object's
-      // generation number does not match your precondition. For a destination
-      // object that does not yet exist, set the ifGenerationMatch precondition to 0
-      // If the destination object already exists in your bucket, set instead a
-      // generation-match precondition using its generation number.
-      preconditionOpts: {ifGenerationMatch: generationMatchPrecondition},
-    };
+    // const local_options = {
+    //   destination: fileName,
+    //   // Optional:
+    //   // Set a generation-match precondition to avoid potential race conditions
+    //   // and data corruptions. The request to upload is aborted if the object's
+    //   // generation number does not match your precondition. For a destination
+    //   // object that does not yet exist, set the ifGenerationMatch precondition to 0
+    //   // If the destination object already exists in your bucket, set instead a
+    //   // generation-match precondition using its generation number.
+    //   preconditionOpts: {ifGenerationMatch: generationMatchPrecondition},
+    // };
 
-    await storage.bucket(options.bucket_name).upload(fileName, local_options);
+    // await storage.bucket(options.bucket_name).upload(fileName, local_options);
+
+    // Set your bucket's public URL
+    // bucket.provideBucketPublicUrl('https://pub-xxxxxxxxxxxxxxxxxxxxxxxxx.r2.dev');
+
+    // console.log(await bucket.exists());
+    // true
+
+    const upload = await bucket.uploadFile(fileName, fileName);
   }
 
   function parseType(field) {
