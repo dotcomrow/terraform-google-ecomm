@@ -91,3 +91,12 @@ jobs:
                 } catch (error) {
                   core.setFailed(error.message);
                 }
+
+    - name: Create Apply Run
+      uses: hashicorp/tfc-workflows-github/actions/create-run@v1.1.1
+      id: apply-run
+      if: success() || failure()
+      with:
+            workspace: ${{ vars.TFE_WORKSPACE }}
+            organization: ${{ vars.TF_ORGANIZATION }}
+            token: ${{ secrets.TFE_TOKEN }}
