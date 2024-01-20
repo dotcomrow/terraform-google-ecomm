@@ -4,8 +4,11 @@ import { GraphQLSchema,
   GraphQLString, 
   GraphQLInt, 
   GraphQLBoolean,
-  introspectionFromSchema } from "graphql";
+  introspectionFromSchema,
+  buildSchema,
+  graphqlSync } from "graphql";
 import fs from 'fs';
+import path from 'path';
 import { serializeError } from "serialize-error";
 import { mergeSchemas } from '@graphql-tools/schema';
 import { R2 } from 'node-cloudflare-r2';
@@ -97,58 +100,121 @@ async function main() {
     }
   }
 
+  async function getRegularSchema() {
+    var regularFiles = fromDir('./modules', '.graphql');
+    var adminFiles = fromDir('./modules', '.admin.graphql');
+    regularFiles = regularFiles.filter( x => !new Set(adminFiles).has(x) );
+    
+    var combined = "";
+
+    for(let x = 0; x < regularFiles.length; x++) {
+      const data = fs.readFileSync(regularFiles[x],{ encoding: 'utf8', flag: 'r' });
+      combined += data;
+    }
+    return buildSchema(combined);
+  }
+
+  async function getAdminSchema() {
+    var adminFiles = fromDir('./modules', '.admin.graphql');
+    
+    var combined = "";
+
+    for(let x = 0; x < adminFiles.length; x++) {
+      const data = fs.readFileSync(adminFiles[x],{ encoding: 'utf8', flag: 'r' });
+      combined += data;
+    }
+    console.log(combined)
+    return buildSchema(combined);
+  }
+
   async function fetchSchemas() {
-    const [tables] = await bigquery.dataset(options.datasetId).getTables();
+    // const [tables] = await bigquery.dataset(options.datasetId).getTables();
 
-    var tableList = [];
+    // var tableList = [];
     var graphqlObjects = [];
-    for (var table of tables) {
-      var tableMetadata = await getTableMetadata(table);
-      tableList.push(tableMetadata);
-    }
+    // for (var table of tables) {
+    //   var tableMetadata = await getTableMetadata(table);
+    //   tableList.push(tableMetadata);
+    // }
 
-    for (var metadata of tableList) {
-      var fields = {};
-      metadata[0].schema.fields.forEach((field) => {
-        fields[field.name] = {
-          type: parseType(field.type),
-          description: field.description,
-        };
-      });
+    // for (var metadata of tableList) {
+    //   var fields = {};
+    //   metadata[0].schema.fields.forEach((field) => {
+    //     fields[field.name] = {
+    //       type: parseType(field.type),
+    //       description: field.description,
+    //     };
+    //   });
 
-      var types = [];
-      types.push( new GraphQLObjectType({
-        name: metadata[0].tableReference.tableId,
-        fields: fields,
-      }));
+    //   var types = [];
+    //   types.push( new GraphQLObjectType({
+    //     name: metadata[0].tableReference.tableId,
+    //     fields: fields,
+    //   }));
 
-      var graphqlSchema = new GraphQLSchema({
-        query: new GraphQLObjectType({
-          name: 'Query',
-          fields: {
-            _dummy: { type: GraphQLString }
-          }
-        }),
-        types: types
-      });
+    //   var graphqlSchema = new GraphQLSchema({
+    //     query: new GraphQLObjectType({
+    //       name: 'Query',
+    //       fields: {
+    //         _dummy: { type: GraphQLString }
+    //       }
+    //     }),
+    //     types: types
+    //   });
 
-      graphqlObjects.push(
-        graphqlSchema
-      );
-    }
+    //   graphqlObjects.push(
+    //     graphqlSchema
+    //   );
+    // }
+
+
 
     return graphqlObjects;
   }
 
+  function fromDir(startPath, filter) {
+
+      // console.log('Starting from dir '+startPath+'/');
+
+      if (!fs.existsSync(startPath)) {
+          console.log("no dir ", startPath);
+          return;
+      }
+
+      var foundList = [];
+      var files = fs.readdirSync(startPath);
+      for (var i = 0; i < files.length; i++) {
+          var filename = path.join(startPath, files[i]);
+          var stat = fs.lstatSync(filename);
+          if (stat.isDirectory()) {
+              fromDir(filename, filter).forEach((item) => {
+                foundList.push(item);
+              }); //recurse
+          } else if (filename.endsWith(filter)) {
+              foundList.push(filename);
+          };
+      };
+      return foundList;
+  };
+
   async function query() {
-    var schemas = await fetchSchemas();
+    // var schemas = await fetchSchemas();
+    
     // const storage = new Storage();
-    const mergedSchema = mergeSchemas({
-      schemas: schemas
-    })
-    const schema_json = introspectionFromSchema(mergedSchema);
+    // const mergedSchema = mergeSchemas({
+    //   schemas: schemas
+    // })
+    // const schema_json = introspectionFromSchema(mergedSchema);
+
+    const schema_json = introspectionFromSchema(await getRegularSchema());
+    // const admin_schema_json = introspectionFromSchema(await getAdminSchema());
+
     let json = JSON.stringify(schema_json);
     // console.log(json);
+
+    // let admin_json = JSON.stringify(admin_schema_json);
+    // console.log(admin_json);
+
     await fs.writeFile(fileName, json,{ flush:true }, (err) => {
       err && console.error(err)
     });
