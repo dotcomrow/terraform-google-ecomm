@@ -123,7 +123,7 @@ async function main() {
       });
 
       var graphqlSchema = new GraphQLSchema({
-        query: graphqlObj
+        types: graphqlObj
       });
 
       graphqlObjects.push(
