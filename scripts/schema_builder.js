@@ -125,7 +125,9 @@ async function main() {
       var graphqlSchema = new GraphQLSchema({
         query: new GraphQLObjectType({
           name: 'Query',
-          fields: metadata[0].tableReference.tableId
+          fields: {
+            _dummy: { type: GraphQLString }
+          }
         }),
         types: types
       });
