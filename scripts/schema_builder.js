@@ -68,7 +68,6 @@ async function main() {
     // true
 
     const upload = await bucket.uploadFile(fileName, fileName, {}, "application/json");
-    console.log(upload);
   }
 
   function parseType(field) {
@@ -117,13 +116,18 @@ async function main() {
         };
       });
 
-      var graphqlObj = new GraphQLObjectType({
+      var types = [];
+      types.push( new GraphQLObjectType({
         name: metadata[0].tableReference.tableId,
         fields: fields,
-      });
+      }));
 
       var graphqlSchema = new GraphQLSchema({
-        query: graphqlObj
+        query: new GraphQLObjectType({
+          name: 'Query',
+          fields: fields
+        }),
+        types: types
       });
 
       graphqlObjects.push(
