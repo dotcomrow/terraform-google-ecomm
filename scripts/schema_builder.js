@@ -34,7 +34,6 @@ async function main() {
 
   const bucket = r2.bucket("$3");
   // const bucket = r2.bucket("schemas");
-  const fileName = 'graphql_schema.json';
 
   function getTableMetadata(table) {
     async function getTM(table) {
@@ -44,7 +43,7 @@ async function main() {
     return getTM(table);
   }
 
-  async function uploadFile() {
+  async function uploadFile(filename) {
     
     // var generationMatchPrecondition = 0
 
@@ -121,7 +120,6 @@ async function main() {
       const data = fs.readFileSync(adminFiles[x],{ encoding: 'utf8', flag: 'r' });
       combined += data;
     }
-    console.log(combined)
     return buildSchema(combined);
   }
 
@@ -204,24 +202,40 @@ async function main() {
     // })
     // const schema_json = introspectionFromSchema(mergedSchema);
 
+    const regularFileName = 'graphql_schema.json';
+    const adminFileName = 'graphql_admin_schema.json';
+
     const schema_json = introspectionFromSchema(await getRegularSchema());
-    // const admin_schema_json = introspectionFromSchema(await getAdminSchema());
+    const admin_schema_json = introspectionFromSchema(await getAdminSchema());
 
     let json = JSON.stringify(schema_json);
     // console.log(json);
 
-    // let admin_json = JSON.stringify(admin_schema_json);
+    let admin_json = JSON.stringify(admin_schema_json);
     // console.log(admin_json);
 
-    await fs.writeFile(fileName, json,{ flush:true }, (err) => {
+    await fs.writeFile(regularFileName, json,{ flush:true }, (err) => {
       err && console.error(err)
     });
-    fs.readFile(fileName, 'utf8', async (err, data) => {
+    fs.readFile(regularFileName, 'utf8', async (err, data) => {
       if (err) {
         console.error(err)
         return
       }
-      await uploadFile();
+      await uploadFile(regularFileName);
+    });
+
+
+
+    await fs.writeFile(adminFileName, admin_json,{ flush:true }, (err) => {
+      err && console.error(err)
+    });
+    fs.readFile(adminFileName, 'utf8', async (err, data) => {
+      if (err) {
+        console.error(err)
+        return
+      }
+      await uploadFile(adminFileName);
     });
   }
 
