@@ -67,7 +67,7 @@ async function main() {
     // console.log(await bucket.exists());
     // true
 
-    const upload = await bucket.uploadFile(fileName, fileName, {}, "application/json");
+    const upload = await bucket.uploadFile(filename, filename, {}, "application/json");
   }
 
   function parseType(field) {
@@ -118,6 +118,30 @@ async function main() {
 
     for(let x = 0; x < adminFiles.length; x++) {
       const data = fs.readFileSync(adminFiles[x],{ encoding: 'utf8', flag: 'r' });
+      combined += data;
+      if (fs.existsSync(adminFiles[x].replace('.admin.graphql', '.graphql'))) {
+        const regData = fs.readFileSync(adminFiles[x].replace('.admin.graphql', '.graphql'),{ encoding: 'utf8', flag: 'r' });
+        combined += regData;
+      }
+    }
+    var additionalSchemas = [
+      "/Query.graphql",
+      "/Setting.graphql",
+      "/Weight.graphql",
+      "/Cart.graphql",
+      "/Date.graphql",
+      "/Price.graphql",
+      "/DateTime.graphql",
+      "/Country.graphql",
+      "/Province.graphql",
+      "/Status.graphql",
+      "/ShippingSetting.graphql",
+      "/StoreSetting.graphql",
+    ];
+    for(let x = 0; x < additionalSchemas.length; x++) {
+      var file = fromDir('./', additionalSchemas[x])[0];
+      console.log(file)
+      const data = fs.readFileSync(file,{ encoding: 'utf8', flag: 'r' });
       combined += data;
     }
     return buildSchema(combined);
