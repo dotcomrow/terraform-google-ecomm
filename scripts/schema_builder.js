@@ -15,13 +15,11 @@ import { R2 } from 'node-cloudflare-r2';
 
 async function main() {
   const options = {
-    // bucket_name: "graphql_schemas"
-
     keyFilename: "key.json",
     projectId: "$1",
     datasetId: "$2",
-    // bucket_name: "$3",
   };
+
   const bigquery = new BigQuery(options);
   // const storage = new Storage({
   //   projectId: options.projectId,
@@ -101,8 +99,8 @@ async function main() {
   }
 
   async function getRegularSchema() {
-    var regularFiles = fromDir('./modules', '.graphql');
-    var adminFiles = fromDir('./modules', '.admin.graphql');
+    var regularFiles = fromDir('./', '.graphql');
+    var adminFiles = fromDir('./', '.admin.graphql');
     regularFiles = regularFiles.filter( x => !new Set(adminFiles).has(x) );
     
     var combined = "";
@@ -115,7 +113,7 @@ async function main() {
   }
 
   async function getAdminSchema() {
-    var adminFiles = fromDir('./modules', '.admin.graphql');
+    var adminFiles = fromDir('./', '.admin.graphql');
     
     var combined = "";
 
