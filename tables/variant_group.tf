@@ -1,6 +1,6 @@
-resource "google_bigquery_table" "variable_group" {
+resource "google_bigquery_table" "varient_group" {
   dataset_id = var.dataset_id
-  table_id   = "variable_group"
+  table_id   = "varient_group"
   deletion_protection = false
   project                     = var.project_id
   schema = <<EOF
