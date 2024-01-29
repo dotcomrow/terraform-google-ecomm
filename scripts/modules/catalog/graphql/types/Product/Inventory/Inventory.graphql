@@ -3,8 +3,8 @@ The `Inventory` type represents a product's inventory information.
 """
 type Inventory {
   isInStock: Boolean!
-  stockAvailability: Int!
-  manageStock: Int!
+  stockAvailability: Boolean!
+  manageStock: Boolean!
 }
 
 extend type Product {
